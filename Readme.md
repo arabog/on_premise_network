@@ -1,4 +1,6 @@
 ## Exercise
+![p1](p1.jpeg?raw=true "p1")
+
 Create an "extension of the on-premises network"
 Using the provided CloudFormation script to deploy a private corporate cloud.  
 
