@@ -68,13 +68,11 @@ Resources:
           Value: !Sub ${EnvironmentName} Private Route Table (AZ1)
 
   # AWS::EC2::Route - Specifies a route in a route-table within a VPC. 
-  # You must specify either DestinationCidrBlock or DestinationIpv6CidrBlock, 
-  # plus the ID of one of the target resources. If you create a route that 
-  # references a transit gateway in the same template where you create 
-  # the transit gateway, you must declare a dependency on the transit 
-  # gateway attachment. The route table cannot use the transit gateway 
-  # until it has successfully attached to the VPC. 
+  # It combines the CIDR IP with Internet Gateway 
+  # The route table cannot use the transit gateway until it has 
+  # successfully attached to the VPC. 
 
+  # OutboundRoute:
   DefaultPrivateRoute1:
     DependsOn: AttachVpnGateway
     Type: AWS::EC2::Route
