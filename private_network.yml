@@ -56,6 +56,9 @@ Resources:
         - Key: Name
           Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
 
+  # AWS::EC2::RouteTable - Specifies a route table for a specified 
+  # VPC. After you create a route table, you can add routes and 
+  # associate the table with a subnet.
   PrivateRouteTable1:
     Type: AWS::EC2::RouteTable
     Properties: 
@@ -63,6 +66,14 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Private Route Table (AZ1)
+
+  # AWS::EC2::Route - Specifies a route in a route-table within a VPC. 
+  # You must specify either DestinationCidrBlock or DestinationIpv6CidrBlock, 
+  # plus the ID of one of the target resources. If you create a route that 
+  # references a transit gateway in the same template where you create 
+  # the transit gateway, you must declare a dependency on the transit 
+  # gateway attachment. The route table cannot use the transit gateway 
+  # until it has successfully attached to the VPC. 
 
   DefaultPrivateRoute1:
     DependsOn: AttachVpnGateway
@@ -87,7 +98,7 @@ Resources:
         - Key: Name
           Value: !Sub ${EnvironmentName} Private Route Table (AZ1)
 
-  # routetable and gw
+  # route and gw
   DefaultPrivateRoute2:
     DependsOn: AttachVpnGateway
     Type: AWS::EC2::Route
@@ -103,6 +114,15 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable2
       SubnetId: !Ref PrivateSubnet2
 
+  # AWS::EC2::VPNConnection - Specifies a VPN connection between 
+  # a virtual private gateway and a VPN customer gateway or a 
+  # transit gateway and a VPN customer gateway.
+
+  # Type: The type of VPN connection.
+  # Required: Yes
+  # Type: String
+  # Allowed values: ipsec.1
+
   OurVPN:
     Type: AWS::EC2::VPNConnection
     Properties: 
@@ -111,6 +131,10 @@ Resources:
       CustomerGatewayId: !Ref ONPREMGW
       VpnGatewayId: !Ref VPNGW
 
+  # AWS::EC2::VPNGateway - Specifies a virtual private gateway. 
+  # A virtual private gateway is the endpoint on the VPC side 
+  # of your VPN connection. You can create a virtual private 
+  # gateway before creating the VPC itself.
   VPNGW:
     Type: AWS::EC2::VPNGateway
     Properties:
@@ -119,21 +143,25 @@ Resources:
         - Key: Name
           Value: !Sub "${EnvironmentName} VPN GW"
 
+  # VPCGatewayAttachment - Attaches an internet gateway or 
+  # a virtual private gateway to a VPC, enabling connectivity 
+  # between the internet and the VPC.
   AttachVpnGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: !Ref VPC
       VpnGatewayId: !Ref VPNGW
   
+  # CustomerGateway - 
   ONPREMGW:
     Type: AWS::EC2::CustomerGateway
     Properties:
       BgpAsn : 65000
       IpAddress: !Ref 'OnPremGateway'
+      Type: ipsec.1
       Tags:
         - Key: Name
           Value: !Sub "${EnvironmentName} On Prem Gateway"
-      Type: ipsec.1
 
 Outputs:
   VPC:
